@@ -245,6 +245,24 @@ tk.Button(
     pady=5
 )
 
+tk.Button(
+    frame,
+    text="Cetak Struk",
+    ...
+)
+
+tk.Button(
+    frame,
+    text="Reset",
+    ...
+)
+
+tk.Button(
+    frame,
+    text="Keluar",
+    ...
+)
+
     # ===============================
 # CARI BARANG
 # ===============================
@@ -359,7 +377,73 @@ def pembayaran():
 
     )
     
+    # ===============================
+# CETAK STRUK
+# ===============================
+def cetak_struk():
+
+    global nomor_transaksi
+
+    if len(keranjang) == 0:
+
+        messagebox.showwarning(
+            "Peringatan",
+            "Belum ada transaksi!"
+        )
+        return
+
+    total = sum(barang.total() for barang in keranjang)
+
+    if total >= 1000000:
+        diskon = total * 0.15
+    elif total >= 500000:
+        diskon = total * 0.10
+    elif total >= 200000:
+        diskon = total * 0.05
+    else:
+        diskon = 0
+
+    bayar = total - diskon
+
+    struk = ""
+    struk += "=================================\n"
+    struk += "      STRUK SUPERMARKET\n"
+    struk += "=================================\n"
+    struk += f"No Transaksi : {nomor_transaksi}\n\n"
+
+    for barang in keranjang:
+
+        struk += (
+            f"{barang.nama}\n"
+            f"{barang.jumlah} x Rp {barang.harga:,}"
+            f" = Rp {barang.total():,}\n\n"
+        )
+
+    struk += "---------------------------------\n"
+    struk += f"Total    : Rp {total:,}\n"
+    struk += f"Diskon   : Rp {int(diskon):,}\n"
+    struk += f"Bayar    : Rp {int(bayar):,}\n"
+    struk += "================================="
+
+    messagebox.showinfo(
+        "Struk Belanja",
+        struk
+    )
+
+    nomor_transaksi += 1
     
+    # ===============================
+# RESET
+# ===============================
+def reset_data():
+
+    keranjang.clear()
+
+    tampil_data()
+
+    entryNama.delete(0, tk.END)
+    entryHarga.delete(0, tk.END)
+    entryJumlah.delete(0, tk.END)
 
 # ===============================
 # WINDOW
