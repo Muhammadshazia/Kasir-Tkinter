@@ -130,6 +130,88 @@ def tambah_barang():
 
     tampil_data()
 
+# ===============================
+# PILIH DATA
+# ===============================
+def pilih_barang(event):
+
+    data = tree.focus()
+
+    if data == "":
+        return
+
+    isi = tree.item(data)
+
+    baris = isi["values"]
+
+    if len(baris) == 0:
+        return
+
+    entryNama.delete(0, tk.END)
+    entryHarga.delete(0, tk.END)
+    entryJumlah.delete(0, tk.END)
+
+    entryNama.insert(0, baris[1])
+    entryHarga.insert(0, baris[2])
+    entryJumlah.insert(0, baris[3])
+
+# ===============================
+# EDIT BARANG
+# ===============================
+def edit_barang():
+
+    data = tree.focus()
+
+    if data == "":
+        messagebox.showwarning(
+            "Peringatan",
+            "Pilih barang terlebih dahulu!"
+        )
+        return
+
+    index = tree.index(data)
+
+    try:
+
+        keranjang[index].nama = entryNama.get()
+        keranjang[index].harga = int(entryHarga.get())
+        keranjang[index].jumlah = int(entryJumlah.get())
+
+    except:
+
+        messagebox.showerror(
+            "Error",
+            "Input salah!"
+        )
+        return
+
+    tampil_data()
+    
+    # ===============================
+# HAPUS BARANG
+# ===============================
+def hapus_barang():
+
+    data = tree.focus()
+
+    if data == "":
+        messagebox.showwarning(
+            "Peringatan",
+            "Pilih barang!"
+        )
+        return
+
+    index = tree.index(data)
+
+    del keranjang[index]
+
+    tampil_data()
+
+    entryNama.delete(0, tk.END)
+    entryHarga.delete(0, tk.END)
+    entryJumlah.delete(0, tk.END)
+    
+    
 
 # ===============================
 # WINDOW
@@ -185,6 +267,28 @@ tk.Button(
     pady=10
 )
 
+tk.Button(
+    frame,
+    text="Edit Barang",
+    width=20,
+    command=edit_barang
+).grid(
+    row=4,
+    column=0,
+    pady=5
+)
+
+tk.Button(
+    frame,
+    text="Hapus Barang",
+    width=20,
+    command=hapus_barang
+).grid(
+    row=4,
+    column=1,
+    pady=5
+)
+
 kolom = (
     "No",
     "Nama",
@@ -207,6 +311,11 @@ for item in kolom:
     tree.column(item,width=180)
 
 tree.pack(pady=10)
+
+tree.bind(
+    "<<TreeviewSelect>>",
+    pilih_barang
+)
 
 labelTotal = tk.Label(
     root,
