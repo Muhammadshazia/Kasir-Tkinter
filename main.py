@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 
 # =====================================
 #      APLIKASI KASIR SUPERMARKET
@@ -210,6 +210,154 @@ def hapus_barang():
     entryNama.delete(0, tk.END)
     entryHarga.delete(0, tk.END)
     entryJumlah.delete(0, tk.END)
+    
+    tk.Button(
+    frame,
+    text="Cari Barang",
+    width=20,
+    command=cari_barang
+).grid(
+    row=5,
+    column=0,
+    pady=5
+)
+
+tk.Button(
+    frame,
+    text="Urut Harga",
+    width=20,
+    command=urut_harga
+).grid(
+    row=5,
+    column=1,
+    pady=5
+)
+
+tk.Button(
+    frame,
+    text="Pembayaran",
+    width=20,
+    command=pembayaran
+).grid(
+    row=6,
+    column=0,
+    columnspan=2,
+    pady=5
+)
+
+    # ===============================
+# CARI BARANG
+# ===============================
+def cari_barang():
+
+    nama = entryNama.get().lower()
+
+    if nama == "":
+        messagebox.showwarning(
+            "Peringatan",
+            "Masukkan nama barang!"
+        )
+        return
+
+    for item in tree.get_children():
+        tree.selection_remove(item)
+
+    for i, barang in enumerate(keranjang):
+
+        if barang.nama.lower() == nama:
+
+            item = tree.get_children()[i]
+
+            tree.selection_set(item)
+
+            tree.focus(item)
+
+            tree.see(item)
+
+            return
+
+    messagebox.showinfo(
+        "Informasi",
+        "Barang tidak ditemukan!"
+    )
+    
+    # ===============================
+# URUTKAN HARGA
+# ===============================
+def urut_harga():
+
+    keranjang.sort(
+        key=lambda x: x.harga
+    )
+
+    tampil_data()
+    
+    # ===============================
+# PEMBAYARAN
+# ===============================
+def pembayaran():
+
+    total = 0
+
+    for barang in keranjang:
+
+        total += barang.total()
+
+    if total >= 1000000:
+
+        diskon = total * 0.15
+
+    elif total >= 500000:
+
+        diskon = total * 0.10
+
+    elif total >= 200000:
+
+        diskon = total * 0.05
+
+    else:
+
+        diskon = 0
+
+    bayar = total - diskon
+
+    uang = simpledialog.askinteger(
+
+        "Pembayaran",
+
+        f"Total Bayar : Rp {int(bayar):,}\n\nMasukkan uang pelanggan"
+
+    )
+
+    if uang is None:
+
+        return
+
+    if uang < bayar:
+
+        messagebox.showerror(
+
+            "Error",
+
+            "Uang tidak cukup!"
+
+        )
+
+        return
+
+    kembali = uang - bayar
+
+    messagebox.showinfo(
+
+        "Pembayaran",
+
+        f"Pembayaran Berhasil\n\n"
+        f"Total : Rp {int(total):,}\n"
+        f"Diskon : Rp {int(diskon):,}\n"
+        f"Bayar : Rp {int(bayar):,}\n"
+        f"Kembalian : Rp {int(kembali):,}"
+
+    )
     
     
 
